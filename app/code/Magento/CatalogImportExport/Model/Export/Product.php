@@ -7,6 +7,8 @@ namespace Magento\CatalogImportExport\Model\Export;
 
 use Magento\Catalog\Model\ResourceModel\Product\Option\Collection;
 use Magento\CatalogImportExport\Model\Import\Product\CategoryProcessor;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Stdlib\DateTime\GetDateTimeFormatFromConfigInterface;
 use Magento\ImportExport\Model\Import;
 use \Magento\Store\Model\Store;
 use \Magento\CatalogImportExport\Model\Import\Product as ImportProduct;
@@ -347,6 +349,10 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
      * @var string
      */
     private $productEntityLinkField;
+    /**
+     * @var GetDateTimeFormatFromConfigInterface
+     */
+    private $getDateTimeFormatFromConfig;
 
     /**
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
@@ -354,7 +360,7 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
      * @param \Magento\Framework\App\ResourceConnection $resource
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Psr\Log\LoggerInterface $logger
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Collection $collection
+     * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $collectionFactory
      * @param \Magento\ImportExport\Model\Export\ConfigInterface $exportConfig
      * @param \Magento\Catalog\Model\ResourceModel\ProductFactory $productFactory
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory $attrSetColFactory
@@ -366,6 +372,8 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
      * @param \Magento\Catalog\Model\Product\LinkTypeProvider $linkTypeProvider
      * @param \Magento\CatalogImportExport\Model\Export\RowCustomizerInterface $rowCustomizer
      * @param array $dateAttrCodes
+     * @param GetDateTimeFormatFromConfigInterface|null $getDateTimeFormatFromConfig
+     * @throws \Magento\Framework\Exception\LocalizedException
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -385,7 +393,8 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
         \Magento\CatalogImportExport\Model\Export\Product\Type\Factory $_typeFactory,
         \Magento\Catalog\Model\Product\LinkTypeProvider $linkTypeProvider,
         \Magento\CatalogImportExport\Model\Export\RowCustomizerInterface $rowCustomizer,
-        array $dateAttrCodes = []
+        array $dateAttrCodes = [],
+        GetDateTimeFormatFromConfigInterface $getDateTimeFormatFromConfig = null
     ) {
         $this->_entityCollectionFactory = $collectionFactory;
         $this->_exportConfig = $exportConfig;
@@ -410,6 +419,9 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
             ->initAttributeSets()
             ->initWebsites()
             ->initCategories();
+
+        $this->getDateTimeFormatFromConfig = $getDateTimeFormatFromConfig
+            ?: ObjectManager::getInstance()->get(GetDateTimeFormatFromConfigInterface::class);
     }
 
     /**
@@ -975,6 +987,8 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
                     $fieldName = isset($this->_fieldsMap[$code]) ? $this->_fieldsMap[$code] : $code;
 
                     if ($this->_attributeTypes[$code] == 'datetime') {
+
+                        $dateTimeFormat = $this->getDateTimeFormatFromConfig->execute();
                         if (in_array($code, $this->dateAttrCodes)
                             || in_array($code, $this->userDefinedAttributes)
                         ) {
@@ -983,13 +997,17 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
                                 \IntlDateFormatter::SHORT,
                                 \IntlDateFormatter::NONE,
                                 null,
-                                date_default_timezone_get()
+                                date_default_timezone_get(),
+                                $dateTimeFormat
                             );
                         } else {
                             $attrValue = $this->_localeDate->formatDateTime(
                                 new \DateTime($attrValue),
                                 \IntlDateFormatter::SHORT,
-                                \IntlDateFormatter::SHORT
+                                \IntlDateFormatter::SHORT,
+                                null,
+                                null,
+                                $dateTimeFormat
                             );
                         }
                     }

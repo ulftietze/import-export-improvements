@@ -282,6 +282,12 @@
             <argument name="scopeType" xsi:type="const">Magento\Store\Model\ScopeInterface::SCOPE_STORE</argument>
         </arguments>
     </type>
+    <type name="Magento\Framework\Stdlib\DateTime\GetDateTimeFormatFromConfig">
+        <arguments>
+            <argument name="defaultDatetimeFormatPath" xsi:type="const">Magento\Directory\Helper\Data::XML_PATH_DEFAULT_DATETIME_FORMAT</argument>
+            <argument name="scopeType" xsi:type="const">Magento\Store\Model\ScopeInterface::SCOPE_STORE</argument>
+        </arguments>
+    </type>
     <type name="Magento\Framework\Locale\Resolver">
         <arguments>
             <argument name="defaultLocalePath" xsi:type="const">Magento\Directory\Helper\Data::XML_PATH_DEFAULT_LOCALE</argument>

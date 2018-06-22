@@ -37,6 +37,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_DEFAULT_COUNTRY = 'general/country/default';
     const XML_PATH_DEFAULT_LOCALE = 'general/locale/code';
     const XML_PATH_DEFAULT_TIMEZONE = 'general/locale/timezone';
+    const XML_PATH_DEFAULT_DATETIME_FORMAT = 'general/locale/locale_date_format';
     /**#@-*/
 
     /**

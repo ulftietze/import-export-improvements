@@ -121,6 +121,10 @@
                     <label>Weight Unit</label>
                     <source_model>Magento\Directory\Model\Config\Source\WeightUnit</source_model>
                 </field>
+                <field id="locale_date_format" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>DateTime Format</label>
+                    <comment>Provide information about your preferred datetime format. Documentation can be found: http://userguide.icu-project.org/formatparse/datetime</comment>
+                </field>
             </group>
         </section>
     </system>
