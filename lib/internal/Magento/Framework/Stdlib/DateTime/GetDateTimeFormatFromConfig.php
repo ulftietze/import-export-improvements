@@ -50,7 +50,6 @@ class GetDateTimeFormatFromConfig implements GetDateTimeFormatFromConfigInterfac
             $scopeType ?: $this->scopeType,
             $scopeCode
         );
-
     }
 
     /**

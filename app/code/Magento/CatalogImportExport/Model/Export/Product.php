@@ -987,8 +987,8 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
                     $fieldName = isset($this->_fieldsMap[$code]) ? $this->_fieldsMap[$code] : $code;
 
                     if ($this->_attributeTypes[$code] == 'datetime') {
-
                         $dateTimeFormat = $this->getDateTimeFormatFromConfig->execute();
+
                         if (in_array($code, $this->dateAttrCodes)
                             || in_array($code, $this->userDefinedAttributes)
                         ) {
